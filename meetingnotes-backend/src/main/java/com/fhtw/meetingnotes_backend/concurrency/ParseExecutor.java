@@ -3,6 +3,7 @@ package com.fhtw.meetingnotes_backend.concurrency;
 import com.fhtw.meetingnotes_backend.domain.ActionItem;
 import com.fhtw.meetingnotes_backend.domain.MeetingNote;
 import com.fhtw.meetingnotes_backend.service.MeetingNotesParser;
+import com.fhtw.meetingnotes_backend.service.AIMeetingNotesParser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -28,13 +29,19 @@ public class ParseExecutor {
 
     private final ExecutorService pool;
     private final Semaphore semaphore;
-    private final MeetingNotesParser parser;
+    private final MeetingNotesParser heuristicParser;
+    private final AIMeetingNotesParser aiParser;
+
+    @Value("${app.parser.mode:heuristic}")
+    private String parserMode;
 
     public ParseExecutor(
             MeetingNotesParser parser,
+            AIMeetingNotesParser aiParser,
             @Value("${app.concurrency.parse-threads:4}") int threads,
             @Value("${app.concurrency.parse-semaphore-permits:10}") int permits) {
-        this.parser = parser;
+        this.heuristicParser = parser;
+        this.aiParser = aiParser;
         this.pool = Executors.newFixedThreadPool(threads);
         this.semaphore = new Semaphore(permits);
     }
@@ -61,10 +68,24 @@ public class ParseExecutor {
 
         return CompletableFuture.supplyAsync(() -> {
             try {
-                // Build a detached note shell just for parsing — no JPA session involved
-                MeetingNote shell = new MeetingNote();
-                shell.setRawContent(rawContent);
-                return parser.parse(shell);
+                return switch (parserMode.toLowerCase()) {
+                    case "ai" -> aiParser.parse(rawContent);
+                    case "hybrid" -> {
+                        try {
+                            yield aiParser.parse(rawContent);
+                        } catch (Exception e) {
+                            log.warn("AI parser failed for noteId={}, falling back: {}", noteId, e.getMessage());
+                            MeetingNote shell = new MeetingNote();
+                            shell.setRawContent(rawContent);
+                            yield heuristicParser.parse(shell);
+                        }
+                    }
+                    default -> {
+                        MeetingNote shell = new MeetingNote();
+                        shell.setRawContent(rawContent);
+                        yield heuristicParser.parse(shell);
+                    }
+                };
             } finally {
                 semaphore.release();
             }
