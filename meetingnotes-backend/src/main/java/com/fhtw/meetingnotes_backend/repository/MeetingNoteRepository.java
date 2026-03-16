@@ -10,4 +10,6 @@ import java.util.Optional;
 public interface MeetingNoteRepository extends JpaRepository<MeetingNote, Long> {
     // Used for idempotent ingestion: if hash already exists, skip
     Optional<MeetingNote> findByContentHash(String contentHash);
+    long countByParseStatus(MeetingNote.ParseStatus parseStatus);
+
 }

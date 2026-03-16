@@ -27,4 +27,9 @@ public interface OutboxEventRepository extends JpaRepository<OutboxEvent, Long> 
     int claimEvent(@Param("id") Long id);
 
     List<OutboxEvent> findTop50ByOrderByScheduledAtDesc();
+
+    List<OutboxEvent> findByEventTypeAndStatusAndProcessedAtIsNotNullOrderByProcessedAtAsc(
+            String eventType,
+            OutboxEvent.EventStatus status
+    );
 }
