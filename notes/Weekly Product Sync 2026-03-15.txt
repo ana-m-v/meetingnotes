@@ -1,0 +1,17 @@
+Weekly Product Sync — 2026-03-15
+Attendees: Alice, Bob, Carol
+Agenda: Roadmap updates, bugs, release plan
+
+Discussion:
+- Sales wants a smaller beta scope.
+- Support flagged login issues in EU region.
+- Marketing needs final messaging by end of month.
+
+Decisions:
+- Beta release moves to 2026-03-28.
+- EU login fix is highest priority.
+
+Action items:
+TODO: Draft new beta scope doc owner: alice
+ACTION: Fix EU login bug @bob by: 2026-03-20
+- [ ] Prepare customer email template assigned to: carol due: 2026-03-22

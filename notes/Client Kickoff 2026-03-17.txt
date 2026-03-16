@@ -1,0 +1,19 @@
+Client Kickoff — 2026-03-17
+Client: Northwind
+Attendees: PM, Tech Lead, Client Sponsor
+
+Goals:
+- Confirm scope and timeline.
+- Identify data migration risks.
+
+Notes:
+- Client has 50k legacy records.
+- They require audit logs for reminders.
+
+Decisions:
+- Phase 1 will exclude legacy migration.
+
+Action items:
+ACTION: Draft data migration plan @gina by: 2026-03-25
+TODO: Provide audit log proposal owner: henry
+- [ ] Schedule security review assigned to: iris due: 2026-03-27

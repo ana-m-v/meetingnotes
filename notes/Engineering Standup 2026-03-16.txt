@@ -1,0 +1,19 @@
+Engineering Standup — 2026-03-16
+Team: Backend, Frontend, QA
+Focus: Stability and release readiness
+
+Updates:
+- Backend: parser refactor finished.
+- Frontend: action item editor UI mostly done.
+- QA: identified flaky reminder tests.
+
+Blockers:
+- SMTP config not working in staging.
+
+Decisions:
+- Keep release date but freeze new features.
+
+Action items:
+ACTION ITEM: Investigate SMTP config owner: dave due: 2026-03-18
+TODO: Add retry for reminder failures assigned to: erin
+1. Review flaky test cases owner: frank due: 2026-03-19
